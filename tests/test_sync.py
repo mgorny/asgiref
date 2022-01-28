@@ -614,7 +614,8 @@ async def test_multiprocessing():
     the event loop from the parent process.
     """
 
-    test_queue = multiprocessing.Queue()
+    mp = multiprocessing.get_context("fork")
+    test_queue = mp.Queue()
 
     async def async_process():
         test_queue.put(42)
@@ -625,7 +626,7 @@ async def test_multiprocessing():
 
     def fork_first():
         """Forks process before running sync_process"""
-        fork = multiprocessing.Process(target=sync_process)
+        fork = mp.Process(target=sync_process)
         fork.start()
         fork.join(3)
         # Force cleanup in failed test case
